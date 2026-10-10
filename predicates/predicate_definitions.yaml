@@ -1,0 +1,30 @@
+# Illustrative subset only. Replace with the verified inventory used in the paper.
+predicates:
+  - name: red_signal
+    source: traffic_light_classifier
+    threshold: 0.5
+    description: Confidence that a relevant traffic signal is red.
+  - name: at_stop_line
+    source: stop_line_geometry
+    threshold: 0.5
+    description: Confidence that ego is at the relevant stop line.
+  - name: pedestrian_in_crosswalk
+    source: pedestrian_detection_and_crosswalk_geometry
+    threshold: 0.5
+    description: Confidence that a pedestrian occupies a crosswalk.
+  - name: obstacle_on_drivable_area
+    source: object_detection_and_drivable_area
+    threshold: 0.5
+    description: Confidence that an obstacle intersects the drivable corridor.
+  - name: speed_limit_applicable
+    source: external_speed_limit_input
+    threshold: 0.5
+    description: Whether a documented applicable speed limit is available.
+  - name: speed_above_limit
+    source: measured_speed_and_limit
+    threshold: 0.5
+    description: Confidence that measured speed exceeds the applicable limit.
+  - name: lane_available
+    source: lane_geometry
+    threshold: 0.5
+    description: Confidence that a lane is available.

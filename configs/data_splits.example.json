@@ -1,0 +1,15 @@
+{
+  "status": "EXAMPLE_TEMPLATE_NOT_ACTUAL_SPLITS",
+  "dataset": "BDD100K-OIA Kaggle snapshot (exact schema/version not inspected)",
+  "seed": 42,
+  "split_policy": "Use official dataset splits if supplied; otherwise create a documented split grouped by original video/sequence to prevent adjacent-frame leakage.",
+  "train": [],
+  "validation": [],
+  "test": [],
+  "notes": [
+    "Populate with exact relative filenames or stable sample IDs before experiments.",
+    "Do not split adjacent frames from the same video across train and test.",
+    "Do not treat action labels as rule-compliance or explanation labels without explicit annotation support.",
+    "Keep the local Adama test video separate from model fitting unless a documented protocol explicitly includes it."
+  ]
+}

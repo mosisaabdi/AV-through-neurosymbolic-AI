@@ -1,0 +1,1 @@
+.venv/\n__pycache__/\n.pytest_cache/\ndata/\ncheckpoints/\noutputs/\n*.pt\n*.pth\n*.onnx\n

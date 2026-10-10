@@ -1,0 +1,53 @@
+experiment:
+  name: full_model
+  seed: 42
+  description: "Assumption-based config for BDD100K-OIA, Adama rules, and local Adama video; verify all values against the original experiments."
+data:
+  dataset_name: "BDD100K-OIA (assumed from project-provided Kaggle dataset)"
+  dataset_version: "Kaggle snapshot date not recorded; record download date and file hashes"
+  root: "data/bdd100k_oia/"
+  split_manifest: "configs/data_splits.example.json"
+  image_width: 640   # placeholder; verify actual value
+  image_height: 384  # placeholder; verify actual value
+perception:
+  architecture: "YOLOP"
+  repository_url: "UNVERIFIED: set the exact YOLOP fork used by the experiment"
+  repository_commit: "UNVERIFIED"
+  checkpoint: "checkpoints/yolop.pt  # assumed filename only; replace with actual checkpoint path"
+  confidence_threshold: 0.25
+  nms_iou_threshold: 0.45
+feature_processing:
+  fusion_method: "concatenate_then_PCA (assumption; verify against paper implementation)"
+  pca_enabled: true
+  pca_components: 256
+  pca_fit_split: "train"
+  pca_artifact: "checkpoints/pca_transform.joblib"
+predicates:
+  definitions: "predicates/predicate_definitions.yaml"
+  expected_dimension: null
+knowledge:
+  ontology_file: "ontology/traffic_rules.yaml"
+  provenance_file: "ontology/rule_provenance.yaml"
+  jurisdiction: "Adama, Ethiopia (assumed evaluation jurisdiction; verify rule applicability)"
+  ontology_version: "0.1.0"
+reasoning:
+  backend: "transparent_fuzzy_baseline (not an LTN implementation; connect actual LTN for paper reproduction)"
+  # For a paper claiming LTN, connect the actual LTN implementation.
+  t_norm: "product"
+  implication: "residual_product"
+  rule_aggregation: "mean"
+  logic_loss_weight: 1.0
+decision:
+  actions: ["STOP", "YIELD", "SLOW", "KEEP_LANE", "CHANGE_LANE", "PROCEED"]
+  rule_weight: 1.0
+  confidence_weight: 0.25
+  infeasible_action_policy: "mask"
+training:
+  implemented: false
+  optimizer: "UNVERIFIED; training pipeline not implemented"
+  learning_rate: null
+  batch_size: null
+  epochs: null
+  random_seeds: [42]
+evaluation:
+  metrics: ["action_f1", "explanation_f1"]

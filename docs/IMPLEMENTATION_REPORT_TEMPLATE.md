@@ -1,0 +1,17 @@
+# Implementation report
+- Git commit:
+- Configuration file / SHA256:
+- Dataset and version:
+- Train/validation/test split manifests:
+- YOLOP repository commit:
+- Checkpoint SHA256:
+- Hardware/software:
+- Predicate inventory version:
+- Ontology version and jurisdiction:
+- LTN library/version/operators:
+- Random seed(s):
+- Checkpoint-selection criterion:
+- Evaluation command:
+- Metrics output file:
+- Deviations from manuscript:
+- Known limitations:

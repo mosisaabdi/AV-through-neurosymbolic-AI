@@ -1,0 +1,12 @@
+{
+  "scene_id": "SYNTHETIC_EXAMPLE_DO_NOT_REPORT_AS_EXPERIMENTAL_RESULT",
+  "predicates": {
+    "red_signal": 0.98, "at_stop_line": 0.91,
+    "pedestrian_in_crosswalk": 0.05, "obstacle_on_drivable_area": 0.0,
+    "speed_limit_applicable": 0.0, "speed_above_limit": 0.0, "lane_available": 0.85
+  },
+  "action_confidence": {
+    "STOP": 0.2, "YIELD": 0.1, "SLOW": 0.2,
+    "KEEP_LANE": 0.5, "CHANGE_LANE": 0.1, "PROCEED": 0.7
+  }
+}

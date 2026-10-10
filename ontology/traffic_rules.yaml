@@ -1,0 +1,37 @@
+# Software examples only; not a complete or legally verified traffic ontology.
+rules:
+  - id: R-SIG-RED
+    description: Stop when red signal applies at stop line.
+    antecedents: [red_signal, at_stop_line]
+    consequent: STOP
+    priority: 100
+    enabled: true
+    provenance: "ILLUSTRATIVE: replace with verified source and section"
+  - id: R-PED-YIELD
+    description: Yield when a pedestrian is in a crosswalk.
+    antecedents: [pedestrian_in_crosswalk]
+    consequent: YIELD
+    priority: 90
+    enabled: true
+    provenance: "ILLUSTRATIVE: replace with verified source and section"
+  - id: R-OBS-SLOW
+    description: Slow when obstacle occupies drivable area.
+    antecedents: [obstacle_on_drivable_area]
+    consequent: SLOW
+    priority: 70
+    enabled: true
+    provenance: "ILLUSTRATIVE: replace with verified source and section"
+  - id: R-SPEED
+    description: Slow when applicable limit is exceeded.
+    antecedents: [speed_limit_applicable, speed_above_limit]
+    consequent: SLOW
+    priority: 60
+    enabled: true
+    provenance: "ILLUSTRATIVE: requires speed input and verified limit"
+  - id: R-LANE
+    description: Continue in lane when lane availability is supported.
+    antecedents: [lane_available]
+    consequent: KEEP_LANE
+    priority: 10
+    enabled: true
+    provenance: "ILLUSTRATIVE: replace with verified source and section"

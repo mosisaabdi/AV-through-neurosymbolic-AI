@@ -1,0 +1,26 @@
+# Assumed paths only. Replace filenames and schemas after inspecting downloaded datasets.
+datasets:
+  bdd100k_oia:
+    source_url: "https://www.kaggle.com/datasets/abdimosisa/oia-lastframe"
+    root: "data/bdd100k_oia"
+    role: "perception_and_available_action_label_evaluation"
+    annotations: null  # set to the actual annotation file; do not infer schema
+    image_dir: null     # set to the actual image directory
+    label_schema: "unknown_until_inspected"
+    use_for_rule_compliance_ground_truth: false
+    use_for_explanation_ground_truth: false
+  adama_traffic_rules:
+    source_url: "https://www.kaggle.com/datasets/abdimosisa/adama-traffic-rules-updated2"
+    root: "data/adama_rules"
+    workbook: null      # set to actual .xlsx/.xls filename
+    role: "jurisdiction_knowledge_source"
+    jurisdiction: "Adama, Ethiopia (assumed project jurisdiction; verify source applicability)"
+  adama_video:
+    source_url: "https://www.kaggle.com/datasets/abdimosisa/adama-video"
+    root: "data/adama_video"
+    video: null         # set to actual video filename
+    role: "local_qualitative_scene_testing"
+    quantitative_evaluation_requires_frame_or_event_ground_truth: true
+splits:
+  manifest: "configs/data_splits.example.json"
+  split_policy: "record exact source split; avoid frame-level leakage between adjacent frames"

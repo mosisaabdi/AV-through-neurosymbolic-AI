@@ -1,0 +1,13 @@
+# Populate with exact jurisdiction, source document/version, section, URL/archive.
+R-SIG-RED:
+  jurisdiction: REPLACE
+  source_document: REPLACE
+  section: REPLACE
+  source_version: REPLACE
+  status: illustrative_unverified
+R-PED-YIELD:
+  jurisdiction: REPLACE
+  source_document: REPLACE
+  section: REPLACE
+  source_version: REPLACE
+  status: illustrative_unverified
