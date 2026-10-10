@@ -25,15 +25,6 @@ The result is an interpretable decision layer designed to support reasoning, aud
 
 ## System overview
 
-```mermaid
-flowchart LR
-    A[Scene / Video / Frames] --> B[Perception Preprocessing]
-    B --> C[Predicate Grounding]
-    C --> D[Rule Evaluation]
-    D --> E[Action Scoring]
-    E --> F[Explanation Generation]
-    F --> G[Decision Output]
-```
 
 ## Core capabilities
 
