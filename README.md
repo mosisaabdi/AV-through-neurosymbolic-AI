@@ -1,71 +1,316 @@
-# Knowledge-Grounded Neuro-Symbolic Driving — Reproducibility Repository
+# Knowledge-Grounded Neuro-Symbolic Driving
 
-This repository has been **updated using explicit assumptions** for the three resources identified by the project owner:
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
+  <img src="https://img.shields.io/badge/Status-Research%20Prototype-6A5ACD" alt="Status: Research Prototype" />
+  <img src="https://img.shields.io/badge/License-Research%20Use-blue" alt="License" />
+  <img src="https://img.shields.io/badge/Tests-Pytest-FFB000?logo=pytest&logoColor=black" alt="Pytest" />
+</p>
 
-1. **BDD100K-OIA / Kaggle `abdimosisa/oia-lastframe`** — assumed to provide image/frame samples and some form of object/action labels. The exact file layout and schema have not been inspected, so the data tools inventory files and preserve raw annotations rather than assuming a fixed schema.
-2. **Adama traffic-rules Excel / Kaggle `abdimosisa/adama-traffic-rules-updated2`** — assumed to contain tabular rule descriptions. The importer guesses common header names, exports a review CSV, and creates a *draft* YAML rule inventory. It cannot establish legal validity or infer missing logic safely; every imported rule must be reviewed.
-3. **Adama test video / Kaggle `abdimosisa/adama-video`** — assumed to contain one or more common video files. A script extracts sampled frames for qualitative pipeline testing. Video frames are not quantitative ground truth unless independently annotated.
+A neuro-symbolic autonomous driving framework for interpretable scene understanding, rule-based driving logic, and evidence-grounded decision-making.
 
-**Important scientific limitation:** this is a reproducibility scaffold and data-adaptation layer, not a verified reproduction of the paper's reported metrics. YOLOP inference and true LTN training/inference still require the exact implementation, checkpoint, and settings used in the experiments. Do not report synthetic/demo outputs as experimental results. The included example traffic rules are illustrative only.
+This repository implements a modular pipeline that combines perception outputs, symbolic predicate grounding, traffic-rule evaluation, and transparent action selection. The design is intended for research, reproducibility, and local adaptation to driving datasets and rule sources.
 
-## Suggested Kaggle workflow
+## Why this project
 
-Download the datasets from the project URLs into a local `data/` folder, or run the scripts in Kaggle with the dataset mounted under `/kaggle/input/`. Do not commit restricted data, model checkpoints, or personally identifying material to GitHub.
+Modern autonomous driving systems often rely on opaque end-to-end models. This project takes a complementary perspective: a transparent stack in which
 
-Example local structure (assumed; adjust to actual downloaded files):
+- perceptual inputs are processed into structured scene features,
+- traffic situations are represented as predicates,
+- symbolic constraints and traffic rules are evaluated explicitly,
+- actions are scored with explainable evidence,
+- decisions can be traced back to rule satisfaction and scene context.
+
+The result is an interpretable decision layer designed to support reasoning, auditing, and qualitative evaluation.
+
+## System overview
+
+```mermaid
+flowchart LR
+    A[Scene / Video / Frames] --> B[Perception Preprocessing]
+    B --> C[Predicate Grounding]
+    C --> D[Rule Evaluation]
+    D --> E[Action Scoring]
+    E --> F[Explanation Generation]
+    F --> G[Decision Output]
+```
+
+## Core capabilities
+
+- Perception preprocessing and scene normalization
+- YOLOP-compatible adapter contract for driving scene understanding
+- Predicate grounding for traffic-state interpretation
+- Knowledge-driven rule evaluation using symbolic logic
+- Transparent fuzzy-rule baseline for decision support
+- Explainable action selection with evidence mapping
+- Dataset inventory and frame extraction tooling for reproducibility
+- Excel-based traffic-rule import workflow for downstream review
+
+## Repository layout
+
+```text
+.
+├── README.md
+├── requirements.txt
+├── configs/
+│   ├── data_splits.example.json
+│   ├── datasets.example.yaml
+│   └── full_model.yaml
+├── decision/
+│   ├── __init__.py
+│   ├── action_scoring.py
+│   └── explanation.py
+├── docs/
+│   ├── IMPLEMENTATION_REPORT_TEMPLATE.md
+│   └── REPRODUCIBILITY_CHECKLIST.md
+├── examples/
+│   └── scene_red_signal.json
+├── fusion/
+│   ├── __init__.py
+│   └── feature_fusion_pca.py
+├── ontology/
+│   ├── __init__.py
+│   ├── import_excel_rules.py
+│   ├── rule_provenance.yaml
+│   └── traffic_rules.yaml
+├── perception/
+│   ├── __init__.py
+│   ├── preprocessing.py
+│   └── yolop_adapter.py
+├── predicates/
+│   ├── __init__.py
+│   └── predicate_definitions.yaml
+├── reasoning/
+│   ├── fuzzy_rules.py
+│   └── ltn_model.py
+├── scripts/
+│   ├── evaluate_predictions.py
+│   ├── extract_video_frames.py
+│   ├── inventory_dataset.py
+│   ├── run_scene.py
+│   └── validate_config.py
+├── tests/
+│   ├── test_config_and_rules.py
+│   ├── test_excel_importer.py
+│   ├── test_predicates.py
+│   └── test_reasoning_decision.py
+└── data/    # local-only dataset directory (not committed to GitHub)
+```
+
+## Installation
+
+### Requirements
+
+- Python 3.10+
+- pip
+- Git
+
+### Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate it:
+
+- Windows:
+
+```powershell
+.venv\Scripts\activate
+```
+
+- macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## Quick start
+
+### 1) Validate the configuration
+
+```bash
+python scripts/validate_config.py --config configs/full_model.yaml
+```
+
+### 2) Run the demo scene
+
+```bash
+python scripts/run_scene.py --scene examples/scene_red_signal.json --config configs/full_model.yaml
+```
+
+This produces an output JSON with:
+
+- selected action
+- action scores
+- rule evaluation details
+- explanation text
+- predicates used by the decision process
+
+### 3) Inventory a dataset
+
+```bash
+python scripts/inventory_dataset.py --root data/bdd100k_oia --out data/processed/bdd_inventory.json
+```
+
+### 4) Extract frames from video input
+
+```bash
+python scripts/extract_video_frames.py --input data/adama_video/test.mp4 --out data/processed/video_frames --every-seconds 1
+```
+
+### 5) Import traffic rules from Excel
+
+```bash
+python ontology/import_excel_rules.py --input data/adama_rules/traffic_rules.xlsx --out-dir data/processed/rule_import
+```
+
+## Project configuration
+
+The repository uses YAML configuration files under `configs/` to specify:
+
+- dataset paths
+- task splits
+- knowledge ontology references
+- action definitions
+- rule weighting and decision parameters
+
+Examples:
+
+- `configs/full_model.yaml`
+- `configs/datasets.example.yaml`
+- `configs/data_splits.example.json`
+
+## Data assumptions and usage
+
+This project is designed to work with local research data and rule sources. A typical setup looks like:
 
 ```text
 data/
-  bdd100k_oia/        # images and annotations from oia-lastframe
-  adama_rules/        # original .xlsx/.xls file
-  adama_video/        # original video
+  bdd100k_oia/
+  adama_rules/
+  adama_video/
   processed/
     video_frames/
     rule_import/
 ```
 
-## Quick start
+The repository does not commit raw datasets, checkpoints, or restricted media to GitHub. These artifacts should be stored locally or on a managed data platform according to the dataset license and institutional policy.
+
+## Architecture
+
+### Perception module
+
+The `perception/` package contains preprocessing and an adapter layer for perception models. It is intended to support operations such as:
+
+- image normalization
+- scene preprocessing
+- feature extraction compatible with driving scene understanding
+- adaptation to YOLOP-style pipelines
+
+### Predicate and knowledge layer
+
+The `predicates/` and `ontology/` modules represent scene state, rule definitions, and regulatory knowledge. These components map raw observations into structured truth conditions such as:
+
+- red light observed
+- stop sign present
+- mandatory yield state
+- unsafe preceding vehicle context
+
+### Reasoning and decision layer
+
+The `reasoning/` package provides symbolic and fuzzy reasoning components for evaluating rule satisfaction and supporting action selection. The `decision/` package then aggregates evidence and produces ranked actions with explanations.
+
+### Explainability
+
+The decision pipeline explicitly records:
+
+- rule activation
+- predicate evidence
+- action confidence
+- explanation rationale
+
+This is designed to support debugging, qualitative analysis, and human review of decisions.
+
+## Testing
+
+Run the project test suite with:
 
 ```bash
-python -m venv .venv
-# activate the environment
-pip install -r requirements.txt
-python -m pytest
-python scripts/validate_config.py --config configs/full_model.yaml
-python scripts/inventory_dataset.py --root data/bdd100k_oia --out data/processed/bdd_inventory.json
-python ontology/import_excel_rules.py --input data/adama_rules/traffic_rules.xlsx --out-dir data/processed/rule_import
-python scripts/extract_video_frames.py --input data/adama_video/test.mp4 --out data/processed/video_frames --every-seconds 1
-python scripts/run_scene.py --scene examples/scene_red_signal.json --config configs/full_model.yaml
+pytest
 ```
 
-Replace example filenames with the actual files. The importer supports `.xlsx` and `.xls` when the needed engine is installed. It writes `rules_draft.yaml`, `rules_review.csv`, and `import_report.json`; these are draft outputs, not authoritative legal interpretations.
+The repository currently includes tests for:
 
-## What the updated tools do
+- configuration validation
+- rule parsing and import behavior
+- predicate definitions
+- reasoning and decision logic
 
-- `scripts/inventory_dataset.py`: lists files, sizes, image dimensions, video metadata when OpenCV is installed, and JSON/JSONL/CSV annotation structure samples. It does not silently transform or relabel annotations.
-- `ontology/import_excel_rules.py`: reads an Excel workbook, guesses likely columns (rule text, ID, condition, action/consequence, source/article), and exports a human-reviewable draft. Unknown columns are retained in the report/review CSV. When the source has only natural-language text, the importer does not pretend it can reliably convert that text into executable predicates.
-- `scripts/extract_video_frames.py`: extracts frames at a configurable interval and writes a manifest. This supports qualitative tests only unless ground-truth labels are separately supplied.
-- `configs/datasets.example.yaml`: documents assumed paths and the separation between development data, rule sources, and video evaluation.
+## Reproducibility and documentation
 
-## Assumptions and boundaries
+The project includes documentation templates for reproducibility and reporting:
 
-- Annotation schemas are unknown. The repository does not assume BDD100K-OIA action labels equal traffic-rule-compliance labels or explanation ground truth.
-- The rule importer uses conservative header matching; review its output and map each rule to predicates/actions manually before enabling it in experiments.
-- PCA dimension and fusion settings in the example config are placeholders. Fit any transform on the training split only and save its fitted artifact.
-- Jurisdiction-specific rules should be versioned and cited to their actual source documents. `ontology/traffic_rules.yaml` remains a software example until replaced by verified rules.
-- Report separate metrics for perception, action prediction, rule compliance, and explanation quality. Document sample counts, splits, uncertainty, and evaluation code.
+- `docs/REPRODUCIBILITY_CHECKLIST.md`
+- `docs/IMPLEMENTATION_REPORT_TEMPLATE.md`
 
-## Repository map
+These are designed to help document dataset versions, model assumptions, rule provenance, evaluation setup, and reporting details.
 
-- `configs/`: experiment and dataset settings
-- `perception/`: preprocessing and YOLOP adapter contract
-- `fusion/`: feature fusion/PCA helper
-- `predicates/`: predicate definitions and scene grounding
-- `ontology/`: example rules, provenance, Excel importer
-- `reasoning/`: transparent fuzzy baseline and LTN integration seam
-- `decision/`: action scoring and evidence-linked explanations
-- `scripts/`: dataset inventory, video frame extraction, config validation, demo, metrics
-- `tests/`: unit tests for scaffold components
-- `docs/`: reproducibility checklist and implementation report template
+## Example workflow
 
-Before publication, pin dependencies, record dataset version/license and split manifests, add YOLOP repository/checkpoint hashes, verify all rules and citations, and ensure reported values are generated by committed code from documented ground truth.
+1. Prepare or collect local driving data.
+2. Inventory the dataset structure and metadata.
+3. Validate configuration.
+4. Run preprocessing and perception adapters.
+5. Ground scene predicates.
+6. Evaluate traffic rules and constraints.
+7. Score candidate actions.
+8. Produce explanation and output logs.
+9. Record the exact setup for reproducibility.
+
+## Notes on scientific use
+
+This repository is structured as a transparent research implementation and reproducibility scaffold. It is intended for:
+
+- pipeline prototyping
+- local experiment adaptation
+- explainable autonomous driving research
+- rule-driven decision validation
+
+It should be used responsibly in accordance with dataset licensing and domain-specific safety requirements.
+
+## Contributing
+
+Contributions are welcome in the following areas:
+
+- robustness of rule import workflows
+- improved perception-to-predicate mapping
+- clearer explanation generation
+- config validation and dataset documentation
+- reproducibility tooling and benchmarking support
+
+Please keep changes focused, documented, and validated with tests.
+
+## License
+
+This repository does not currently include a license file. If you plan to publish or distribute it publicly, add a license such as MIT or Apache-2.0 before release.
+
+## Citation
+
+If you use this repository in research, please cite the project appropriately and document the exact version, dataset sources, and rule provenance used in your work.
+
+## Maintainer
+
+Add your name, lab, or institutional affiliation here.
+
+---
+
+<p align="center">
+  <strong>Transparent, knowledge-grounded decision-making for autonomous driving.</strong>
+</p>
